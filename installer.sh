@@ -155,6 +155,10 @@ ln -sf $HOME/mikhmonv3/mikhmon.sh $PREFIX/bin/mikhmon
 
 sleep 1
 
+        echo "${C}[+] Suppression des fichiers temporaire...${W}
+                rm -r mikhmonv3
+sleep 1
+
 # ====== FIN ======
 echo ""
 echo -e "${G}[✓] INSTALLATION TERMINÉE${W}"
