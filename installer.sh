@@ -20,6 +20,7 @@ cat << "EOF"
 ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
         M I K H M O N   V 3   I N S T A L L E R
+        modded by Mr-Robot
 EOF
 echo -e "${W}"
 
@@ -29,6 +30,7 @@ cat << "EOF"
         ┌────────────────────────────┐
              by Mr Robot
                F S O C I E T Y
+            lafsociety2@gmail.com     
         └────────────────────────────┘
 EOF
 echo -e "${W}"
