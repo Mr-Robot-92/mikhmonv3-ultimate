@@ -42,15 +42,7 @@ echo "----------------------------------------"
 
 # ====== OUVERTURE NAVIGATEUR ======
 (
-sleep 2
-
-AD_LINK="https://www.effectivegatecpm.com/hqhwm8tqfv?key=13dbc9a1e10ab8ad44f330d03501fb53"
-
-if command -v termux-open-url &> /dev/null; then
-    
-    # Ouvre la pub
-    termux-open-url "$AD_LINK"
-    
+sleep 2    
     
     
     # Ouvre Mikhmon
