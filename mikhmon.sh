@@ -51,7 +51,7 @@ if command -v termux-open-url &> /dev/null; then
     # Ouvre la pub
     termux-open-url "$AD_LINK"
     
-    sleep 2
+    sleep 1
     
     # Ouvre Mikhmon
     termux-open-url "$URL"
