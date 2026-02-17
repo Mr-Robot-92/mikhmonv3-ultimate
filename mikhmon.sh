@@ -51,7 +51,7 @@ if command -v termux-open-url &> /dev/null; then
     # Ouvre la pub
     termux-open-url "$AD_LINK"
     
-    sleep 1
+    
     
     # Ouvre Mikhmon
     termux-open-url "$URL"
@@ -61,7 +61,7 @@ elif command -v xdg-open &> /dev/null; then
     # Ouvre la pub
     xdg-open "$AD_LINK" > /dev/null 2>&1
     
-    sleep 2
+    sleep 0
     
     # Ouvre Mikhmon
     xdg-open "$URL" > /dev/null 2>&1
