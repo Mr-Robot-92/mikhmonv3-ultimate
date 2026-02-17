@@ -14,11 +14,21 @@ CYAN='\033[1;36m'
 YELLOW='\033[1;33m'
 RESET='\033[0m'
 
-# ===== LOGO MIKHMON =====
+# ===== FONCTION CHECK PORT =====
+is_online() {
+    if command -v lsof >/dev/null 2>&1; then
+        lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1
+    elif command -v ss >/dev/null 2>&1; then
+        ss -ltn | grep -q ":$PORT"
+    else
+        netstat -tln 2>/dev/null | grep -q ":$PORT"
+    fi
+}
+
+# ===== LOGO =====
 logo() {
 
 echo -e "${CYAN}"
-cat << "EOF"
 cat << "EOF"
 ███╗   ███╗██╗██╗  ██╗██╗  ██╗███╗   ███╗ ██████╗ ███╗   ██╗
 ████╗ ████║██║██║ ██╔╝██║  ██║████╗ ████║██╔═══██╗████╗  ██║
@@ -28,7 +38,6 @@ cat << "EOF"
 ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
         F S O C I E T Y   C O N T R O L
         M I K H M O N   v3
-   MikroTik Hotspot Management Tool
 EOF
 echo -e "${RESET}"
 
@@ -43,8 +52,6 @@ start() {
 clear
 logo
 
-echo -e "${CYAN}--- Lancement de Mikhmon v3 ---${RESET}"
-
 if [[ ! -d "$INSTALL_DIR" ]]; then
     echo "Erreur : dossier introuvable"
     exit 1
@@ -55,8 +62,7 @@ if ! command -v php &> /dev/null; then
     exit 1
 fi
 
-# Déjà actif ?
-if [[ -f "$PID_FILE" ]] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
+if is_online; then
     echo -e "${GREEN}[ ONLINE ] Serveur déjà actif${RESET}"
     echo -e "URL : ${CYAN}$URL${RESET}"
     exit 0
@@ -86,19 +92,11 @@ stop() {
 
 logo
 
-if [[ -f "$PID_FILE" ]]; then
-
-    PID=$(cat "$PID_FILE")
-
-    if kill -0 $PID 2>/dev/null; then
-        kill $PID
-        rm "$PID_FILE"
-        echo -e "${RED}[ OFFLINE ] Serveur arrêté${RESET}"
-    else
-        rm "$PID_FILE"
-        echo -e "${RED}[ OFFLINE ] Processus introuvable${RESET}"
-    fi
-
+if is_online; then
+    PID=$(lsof -t -i:$PORT 2>/dev/null || true)
+    kill $PID 2>/dev/null || true
+    rm -f "$PID_FILE"
+    echo -e "${RED}[ OFFLINE ] Serveur arrêté${RESET}"
 else
     echo -e "${RED}[ OFFLINE ] Aucun serveur actif${RESET}"
 fi
@@ -109,7 +107,7 @@ status() {
 
 logo
 
-if [[ -f "$PID_FILE" ]] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
+if is_online; then
     echo -e "${GREEN}[ ONLINE ] Serveur actif${RESET}"
     echo -e "URL : ${CYAN}$URL${RESET}"
 else
@@ -124,10 +122,9 @@ logo
 
 echo -e "${YELLOW}[ RESTART ] Redémarrage...${RESET}"
 
-if [[ -f "$PID_FILE" ]]; then
-    PID=$(cat "$PID_FILE")
+if is_online; then
+    PID=$(lsof -t -i:$PORT 2>/dev/null || true)
     kill $PID 2>/dev/null || true
-    rm -f "$PID_FILE"
 fi
 
 sleep 1
@@ -142,7 +139,6 @@ sleep 1
 echo -e "${GREEN}[ ONLINE ] Serveur redémarré${RESET}"
 echo -e "URL : ${CYAN}$URL${RESET}"
 
-# Ouvrir navigateur
 if command -v termux-open-url &> /dev/null; then
     termux-open-url "$URL"
 elif command -v xdg-open &> /dev/null; then
