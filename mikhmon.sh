@@ -86,9 +86,9 @@ fi
 *)
 
 echo "Usage :"
-echo "  $0 start"
-echo "  $0 stop"
-echo "  $0 status"
+echo "  mikhmon start"
+echo "  mikhmon stop"
+echo "  mikhmon status"
 
 ;;
 
