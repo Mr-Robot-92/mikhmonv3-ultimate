@@ -1,95 +1,130 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+clear
 set -e
 
-INSTALL_DIR="$HOME/mikhmonv3"
-PID_FILE="$INSTALL_DIR/server.pid"
-PORT=8080
-URL="http://127.0.0.1:$PORT"
+# ====== COULEURS ======
+R='\033[1;31m'
+G='\033[1;32m'
+Y='\033[1;33m'
+C='\033[1;36m'
+W='\033[0m'
 
-# ===== COULEURS =====
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-CYAN='\033[1;36m'
-RESET='\033[0m'
+# ====== SPINNER ======
+spinner() {
+    local pid=$!
+    local spin='-\|/'
+    local i=0
+    while kill -0 $pid 2>/dev/null; do
+        i=$(( (i+1) %4 ))
+        printf "\r${C}[ SYSTEM ] Chargement... ${spin:$i:1}${W}"
+        sleep .08
+    done
+    printf "\r${G}[✓] Terminé.${W}\n"
+}
 
-case "$1" in
+# ====== BANNIERE ======
+echo -e "${R}"
+cat << "EOF"
+███╗   ███╗██╗██╗  ██╗██╗  ██╗███╗   ███╗ ██████╗ ███╗   ██╗
+████╗ ████║██║██║ ██╔╝██║  ██║████╗ ████║██╔═══██╗████╗  ██║
+██╔████╔██║██║█████╔╝ ███████║██╔████╔██║██║   ██║██╔██╗ ██║
+██║╚██╔╝██║██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║   ██║██║╚██╗██║
+██║ ╚═╝ ██║██║██║  ██╗██║  ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║
+╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
-start)
+        M I K H M O N   V 3   U L T I M A T E
+EOF
+echo -e "${W}"
 
-echo -e "${CYAN}--- Lancement de Mikhmon v3 ---${RESET}"
+# ====== SIGNATURE ======
+echo -e "${R}"
+cat << "EOF"
+        ┌────────────────────────────┐
+             by Mr Robot
+               F S O C I E T Y
+            lafsociety2@gmail.com
+        └────────────────────────────┘
+EOF
+echo -e "${W}"
 
-if [[ ! -d "$INSTALL_DIR" ]]; then
-    echo "Erreur : dossier introuvable"
-    exit 1
+sleep 1
+echo -e "${C}[ SYSTEM ] Initialisation...${W}"
+sleep 1
+
+# ====== DETECTION SYSTEME ======
+if [ -d "/data/data/com.termux" ]; then
+    SYS="TERMUX"
+else
+    SYS="LINUX"
 fi
+
+echo -e "${G}[✓] Système détecté : $SYS${W}"
+
+# ====== INSTALL DEPENDANCES ======
+echo -e "${C}[+] Installation des dépendances...${W}"
+
+if [ "$SYS" = "TERMUX" ]; then
+    pkg update -y > /dev/null 2>&1 & spinner
+    pkg install php curl unzip git -y > /dev/null 2>&1 & spinner
+    INSTALL_DIR="$HOME"
+    BIN_DIR="$PREFIX/bin"
+else
+    sudo apt update -y > /dev/null 2>&1 & spinner
+    sudo apt install php curl unzip git -y > /dev/null 2>&1 & spinner
+    INSTALL_DIR="$HOME"
+    BIN_DIR="/usr/local/bin"
+fi
+
+# ====== TELECHARGEMENT ======
+echo -e "${C}[+] Téléchargement de Mikhmon...${W}"
 
 cd "$INSTALL_DIR"
+rm -rf mikhmonv3 > /dev/null 2>&1
+git clone https://github.com/Mr-Robot-92/mikhmonv3.git > /dev/null 2>&1 & spinner
 
-if ! command -v php &> /dev/null; then
-    echo "Erreur : PHP non installé"
-    exit 1
+# ====== CONFIG ======
+echo -e "${C}[+] Configuration...${W}"
+
+chmod +x "$INSTALL_DIR/mikhmonv3/mikhmon.sh"
+
+if [ "$SYS" = "TERMUX" ]; then
+    ln -sf "$INSTALL_DIR/mikhmonv3/mikhmon.sh" "$BIN_DIR/mikhmon"
+else
+    sudo ln -sf "$INSTALL_DIR/mikhmonv3/mikhmon.sh" "$BIN_DIR/mikhmon"
 fi
 
-if [[ -f "$PID_FILE" ]] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
-    echo -e "${GREEN}Serveur déjà actif.${RESET}"
-    exit 0
-fi
+sleep 1
 
-php -S 127.0.0.1:$PORT >/dev/null 2>&1 &
+# ====== INSTALL OK ======
+echo ""
+echo -e "${G}[✓] INSTALLATION TERMINÉE${W}"
+echo -e "${G}[✓] Commande disponible : mikhmon${W}"
+echo ""
 
-echo $! > "$PID_FILE"
+echo -e "${R}Connexion au système...${W}"
+sleep 1
+echo -e "${C}Accès autorisé.${W}"
+sleep 1
 
-echo -e "${GREEN}[ ONLINE ] Serveur lancé${RESET}"
-echo "URL : $URL"
+# ====== LANCEMENT AUTO ======
 
+# ====== PROMO YOUTUBE ======
+echo ""
+echo -e "${R}Rejoignez la Fsociety...${W}"
+sleep 1
+echo -e "${C}Abonnez-vous pour plus d’outils exclusifs.${W}"
 sleep 2
 
-if command -v termux-open-url &> /dev/null; then
-    termux-open-url "$URL"
-elif command -v xdg-open &> /dev/null; then
-    xdg-open "$URL" >/dev/null 2>&1
-fi
+YT="https://www.youtube.com/@Mr-Robot92"
 
-;;
+echo -e "${Y}Ouverture de la chaîne YouTube...${W}"
 
-stop)
-
-if [[ -f "$PID_FILE" ]]; then
-    PID=$(cat "$PID_FILE")
-
-    if kill -0 $PID 2>/dev/null; then
-        kill $PID
-        rm "$PID_FILE"
-        echo -e "${RED}[ OFFLINE ] Serveur arrêté${RESET}"
-    else
-        echo "Serveur déjà arrêté"
-        rm "$PID_FILE"
-    fi
+if [ "$SYS" = "TERMUX" ]; then
+    termux-open-url "$YT"
 else
-    echo "Aucun serveur en cours"
+    xdg-open "$YT" > /dev/null 2>&1
 fi
 
-;;
-
-status)
-
-if [[ -f "$PID_FILE" ]] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
-    echo -e "${GREEN}[ ONLINE ] Serveur actif${RESET}"
-    echo "URL : $URL"
-else
-    echo -e "${RED}[ OFFLINE ] Serveur arrêté${RESET}"
-fi
-
-;;
-
-*)
-
-echo "Usage :"
-echo "  $0 start"
-echo "  $0 stop"
-echo "  $0 status"
-
-;;
-
-esac
+echo ""
+echo -e "${R}-- Mr Robot | Fsociety --${W}"
