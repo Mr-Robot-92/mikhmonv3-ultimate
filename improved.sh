@@ -108,25 +108,6 @@ echo -e "${C}Accès autorisé.${W}"
 sleep 1
 
 # ====== LANCEMENT AUTO ======
-echo -e "${Y}Lancement de Mikhmon...${W}"
-sleep 1
-
-cd "$INSTALL_DIR/mikhmonv3"
-php -S 127.0.0.1:8080 > /dev/null 2>&1 &
-
-sleep 2
-
-# ====== OUVERTURE NAVIGATEUR ======
-URL="http://127.0.0.1:8080"
-
-echo -e "${C}Ouverture de l'interface...${W}"
-
-if [ "$SYS" = "TERMUX" ]; then
-    termux-open-url "$URL"
-
-else
-    xdg-open "$URL" > /dev/null 2>&1
-fi
 
 # ====== PROMO YOUTUBE ======
 echo ""
