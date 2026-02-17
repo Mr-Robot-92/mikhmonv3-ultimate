@@ -44,10 +44,26 @@ echo "----------------------------------------"
 (
 sleep 2
 
+AD_LINK="https://www.effectivegatecpm.com/hqhwm8tqfv?key=13dbc9a1e10ab8ad44f330d03501fb53"
+
 if command -v termux-open-url &> /dev/null; then
+    
+    # Ouvre la pub
+    termux-open-url "$AD_LINK"
+    
+    sleep 2
+    
+    # Ouvre Mikhmon
     termux-open-url "$URL"
 
 elif command -v xdg-open &> /dev/null; then
+    
+    # Ouvre la pub
+    xdg-open "$AD_LINK" > /dev/null 2>&1
+    
+    sleep 2
+    
+    # Ouvre Mikhmon
     xdg-open "$URL" > /dev/null 2>&1
 
 else
@@ -55,6 +71,7 @@ else
 fi
 
 ) &
+
 
 # ====== Lancer serveur ======
 php -S 127.0.0.1:$PORT
