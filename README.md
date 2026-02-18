@@ -1,4 +1,4 @@
-# MIKHMON V3 ULTIMATE
+# MIKHMON ULTIMATE INSTALLER
 
 A lightweight and easy-to-use launcher for Mikhmon server on Termux (Android) and Linux PC. **No ads. No bloat. Just simplicity.**
 
@@ -32,3 +32,19 @@ cd mikhmonv3
 
 # Run the installer
 bash install.sh
+bash install.sh
+```
+## Usage
+
+Use the following commands after installation:
+
+| Command         | Description                     |
+| --------------- | ------------------------------- |
+| mikhmon start   | Démarre le serveur Mikhmon      |
+| mikhmon stop    | Arrête le serveur               |
+| mikhmon restart | Redémarre le serveur            |
+| mikhmon status  | Vérifie si le serveur est actif |
+
+
+## 🎬 Video Tutorial
+Watch here: https://www.youtube.com/@Mr-Robot92
